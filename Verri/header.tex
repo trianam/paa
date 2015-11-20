@@ -1,0 +1,220 @@
+%This work is licensed under the Creative Commons
+%Attribution-ShareAlike 4.0 International License. To view a copy of
+%this license, visit http://creativecommons.org/licenses/by-sa/4.0/ or
+%send a letter to Creative Commons, PO Box 1866, Mountain View, CA
+%94042, USA.
+
+%\documentclass[gray,handout, pdftex, 11pt]{beamer}
+%\documentclass[handout, pdftex, 11pt]{beamer}
+
+\documentclass[pdftex, 11pt]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+%\usepackage[italian]{babel}
+\usepackage{acronym}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{microtype}
+\usepackage{acronym}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{shapes, chains, scopes, shadows, positioning, arrows,
+  decorations.pathmorphing, calc, mindmap, petri}
+
+\def\transW{8mm}
+\def\transH{2mm}
+
+\colorlet{mmcb}{black!20}
+\colorlet{mmc1}{red!80}
+\colorlet{mmc2}{blue!80}
+\colorlet{c1}{green!20}
+\colorlet{c2}{blue!10}
+\colorlet{c3}{yellow!10}
+\colorlet{c4}{red!10}
+\colorlet{drawColor}{black!80}
+\colorlet{commentColor}{green!70!black!90}
+\colorlet{codeBgColor}{yellow!50}
+\colorlet{bashBgColor}{green!50}
+
+\tikzset{onslide/.code args={<#1>#2}{%
+  \only<#1>{\pgfkeysalso{#2}} % \pgfkeysalso doesn't change the path
+}}
+\tikzset{temporal/.code args={<#1>#2#3#4}{%
+  \temporal<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}}{\pgfkeysalso{#4}} % \pgfkeysalso doesn't change the path
+}}
+
+\tikzstyle{oval}=[ellipse, align=center, drop shadow, draw=drawColor, fill=white]
+\tikzstyle{rect}=[rectangle, rounded corners=2pt, align=center, drop
+shadow, draw=drawColor, fill=white]
+\tikzstyle{comment}=[text=commentColor,font=\itshape]
+\tikzstyle{textLab}=[]
+\tikzstyle{arrow}=[->, very thick, >=stealth', draw=black!80]
+\tikzstyle{darrow}=[->, dash pattern=on 3pt off2pt, very thick, >=stealth', draw=black!80]
+\tikzstyle{fInt}=[circle, align=center, drop shadow, draw=drawColor, fill=white]
+\tikzstyle{fStartEnd}=[ellipse, align=center, drop shadow, draw=drawColor, fill=white]
+\tikzstyle{fInput}=[trapezium, trapezium left angle=70, trapezium right angle=110,
+align=center, drop shadow, draw=drawColor, fill=white]
+\tikzstyle{fProcess}=[rectangle, align=center, drop shadow, draw=drawColor, fill=white]
+\tikzstyle{fSelection}=[diamond, shape aspect=3, align=center, drop
+shadow, draw=drawColor, fill=white]
+\tikzstyle{fOutput}=[tape, tape bend top=none, align=center, drop shadow, draw=drawColor, fill=white]
+\tikzstyle{mem}=[rectangle, align=center, draw=drawColor, fill=white]
+\tikzstyle{clo}=[cloud, aspect=2, align=center, drop shadow, draw=drawColor, fill=white]
+\tikzstyle{file}=[chamfered rectangle, chamfered rectangle corners =
+north east, align=center, drop shadow, draw=drawColor, fill=white]
+\tikzstyle{files}=[chamfered rectangle, chamfered rectangle corners = north east, align=center, double copy shadow, draw=drawColor, fill=white]
+\tikzstyle{myMindmap}=[mindmap,
+every node/.style={concept, minimum size=5mm, text width=5mm}, 
+% every child/.style={level distance=10mm, concept color=mmcb}
+level 1/.append style={level distance=10mm,sibling angle=45},
+level 2/.append style={level distance=10mm,sibling angle=45},
+level 3/.append style={level distance=10mm,sibling angle=45}
+]
+\tikzstyle{myPlace} = [place, very thick, draw=drawColor, fill=white, drop shadow]
+\tikzstyle{transExpH} = [transition, very thick, draw=drawColor, fill=white, drop
+shadow, minimum width=\transW, minimum height=\transH]
+\tikzstyle{transExpV} = [transition, very thick, draw=drawColor, fill=white, drop
+shadow, minimum width=\transH, minimum height=\transW]
+\tikzstyle{transDetH} = [transition, very thick, draw=drawColor, fill=black, drop shadow, minimum width=\transW, minimum height=\transH]
+\tikzstyle{transDetV} = [transition, very thick, draw=drawColor, fill=black, drop shadow, minimum width=\transH, minimum height=\transW]
+\tikzstyle{pre}=[<-, very thick, >=stealth', draw=drawColor]
+\tikzstyle{preN}=[<-, very thick, >=o, draw=drawColor]
+\tikzstyle{post}=[->, very thick, >=stealth', draw=drawColor]
+\tikzstyle{highlight}=[draw=red]
+\lstdefinestyle{customJava}{
+   language=Java,
+   % basicstyle=\small\ttfamily\bfseries,
+   basicstyle=\ttfamily,
+   keywordstyle=\color{blue}\ttfamily,
+   stringstyle=\color{red}\ttfamily,
+   commentstyle=\color{green}\ttfamily,
+   morecomment=[l][\color{magenta}]{\#},
+   % breaklines=false,
+   breaklines=true, breakatwhitespace=false,
+   postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}},
+   frameround=fttt,
+   frame=trBL,
+   backgroundcolor=\color{yellow!20},
+   numbers=left,
+   stepnumber=1,    
+   firstnumber=1,
+   numberfirstline=true,
+   numberstyle=\tiny\color{black!50},
+   xleftmargin=2em,
+   framexleftmargin=1.5em,
+   % rulesepcolor=\color{gray},
+   rulecolor=\color{black}
+   % linewidth=8cm,
+}
+
+\lstdefinestyle{customBash}{
+   language=bash,
+   % basicstyle=\small\ttfamily\bfseries,
+   basicstyle=\ttfamily,
+   keywordstyle=\color{blue}\ttfamily,
+   stringstyle=\color{red}\ttfamily,
+   commentstyle=\color{green}\ttfamily,
+   morecomment=[l][\color{magenta}]{\#},
+   % breaklines=false,
+   breaklines=true, breakatwhitespace=false,
+   postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}},
+   frameround=fttt,
+   frame=trBL,
+   backgroundcolor=\color{green!20},
+   numbers=left,
+   stepnumber=1,    
+   firstnumber=1,
+   numberfirstline=true,
+   numberstyle=\tiny\color{black!50},
+   xleftmargin=2em,
+   framexleftmargin=1.5em,
+   % rulesepcolor=\color{gray},
+   rulecolor=\color{black}
+   % linewidth=8cm,
+}
+
+\lstnewenvironment{jblock}[1][]
+{
+  \lstset{
+    style=customJava,
+    #1
+  }
+}{}
+
+\newcommand{\jfile}[2][]{
+  \lstinputlisting[style=customJava, title={\texttt{\detokenize{#2}}}, #1]{#2}
+}
+
+\newcommand{\jj}[2][]{\lstinline[style=customJava,#1]`#2`}
+  %\colorbox{codeBgColor}{
+  %  \lstinline[style=customJava,#1]`#2`
+  %}
+%}
+
+\lstnewenvironment{bblock}[1][]
+{
+  \lstset{
+    style=customBash,
+    #1
+  }
+}{}
+
+\newcommand{\bfile}[2][]{
+  \lstinputlisting[style=customBash, title={\texttt{\detokenize{#2}}}, #1]{#2}
+}
+
+\newcommand{\bb}[2][]{
+  \colorbox{bashBgColor}{
+    \lstinline[style=customBash,#1]`#2`
+  }
+}
+
+\graphicspath{{img/}}
+\lstset{inputpath=../cSrc/}
+
+\newcommand{\me}{\mathrm{e}}
+\newcommand{\C}{\texttt{C}}
+\newcommand{\gcc}{\texttt{gcc}}
+\newcommand{\bash}{\texttt{Bash}}
+
+\definecolor{links}{HTML}{2A1B81}
+\hypersetup{colorlinks,linkcolor=links,urlcolor=links}
+
+\definecolor{links}{HTML}{2A1B81}
+\hypersetup{colorlinks,linkcolor=,urlcolor=links}
+
+
+\mode<presentation>{
+  %-------------------------1
+  \usetheme{Boadilla}
+  \usecolortheme{beaver}
+  %-------------------------1
+  %-------------------------2
+  %\usetheme{Goettingen}
+  %\usecolortheme{sidebartab}
+  %-------------------------2
+  %\useoutertheme[right]{sidebar}
+  %\usefonttheme{default}
+  \setbeamercovered{transparent}
+  %\setbeameroption{show notes on second screen=right}
+  \setbeamertemplate{navigation symbols}{}
+  \setbeamertemplate{footline}{}
+
+  \bibliographystyle{abbrv}  
+  %\renewcommand\bibfont{\scriptsize}
+  \setbeamertemplate{bibliography item}{\textbullet}
+  \setbeamertemplate{itemize item}{\checkmark}
+  \setbeamertemplate{itemize subitem}{-}
+  \setbeamertemplate{enumerate items}[default]
+  \setbeamertemplate{sections/subsections in toc}[square]
+}
+
+\usebackgroundtemplate
+{
+  \begin{tikzpicture}
+    \node[opacity=0.1] {\includegraphics[scale=1]{img/logoUnifi.png}};
+  \end{tikzpicture}
+}
