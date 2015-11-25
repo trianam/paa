@@ -130,6 +130,25 @@
 
 \begin{frame}
   \frametitle{Problem}  
+  \begin{itemize}
+  \item The control polygon is free from obstacles by
+    construction\pause
+    \begin{itemize}
+    \item (the graph is pruned of the arcs that cross an obstacle's surface)
+    \end{itemize}
+  \item But the curve is not guaranteed to be free from obstacles
+  \end{itemize}
+  \begin{center}
+    \begin{tikzpicture}
+      \draw[color=green] (1,0) -- (2,1) -- (3,0) -- (1,0);
+      \draw[color=black] (0,0) -- (2,2) -- (4,0);
+      \draw[color=red] (0,0) to [bend left=40] (4,0);
+
+      \filldraw[color=green, draw=black] (0,0) circle (2pt);
+      \filldraw[color=green, draw=black] (2,2) circle (2pt);
+      \filldraw[color=green, draw=black] (4,0) circle (2pt);
+    \end{tikzpicture}
+  \end{center}
 \end{frame}
 
 \begin{frame}
