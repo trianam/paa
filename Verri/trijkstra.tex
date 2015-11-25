@@ -10,12 +10,10 @@
 \begin{document}
 
 \title[Trijkstra]{\textbf{Trijkstra}}
-\date[\today]{\flushright \today}
+\date[4 December 2015]{\flushright 4 December 2015}
 \subtitle{A Dijkstra algorithm application to path planning}
 \institute[Uni. Firenze]{
-%  \includegraphics[width=2cm]{img/logoUnifi.eps}\\
-  \includegraphics[width=2cm]{img/logoUnifi.png}\\
-  Universit\`a degli Studi di Firenze
+  \includegraphics[width=5cm]{img/logoUnifiName.eps}
 }
 
 \author[Martina Stefano]{
@@ -44,17 +42,102 @@
   \titlepage
 \end{frame}
 
-\section{Intro}
+\section{Background}
+\begin{frame}
+  \frametitle{Voronoi diagrams}
+  \begin{description}
+  \item[Input:] A set of points in plane (or space) called
+    \alert{sites}
+  \item[Output:]<2-> A partition of the plane (or space) such that each
+    point of a \alert{region} is nearer to a certain site respect to
+    the others
+  \end{description}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        \includegraphics[width=\textwidth]{img/voroSites.eps}
+      \end{center}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        \includegraphics[width=\textwidth]<2->{img/voronoi.eps}
+      \end{center}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}
+  \frametitle{B-spline cubiche}
+\end{frame}
+
 \begin{frame}
   \frametitle{Background}
+  \begin{block}{Main problem}
+    \alert{Path planning} from a \alert{start} point to an \alert{end}
+    point in 3D space with obstacles using \alert{Voronoi} diagrams.
+  \end{block}\pause
+  \begin{enumerate}
+  \item Distribute \alert{points} in the surfaces of obstacles
+    \begin{itemize}
+    \item and optionally in the surface of bounding box\pause
+    \end{itemize}
+  \item Build \alert{Voronoi} diagram using those points as
+    source\pause
+  \item Transform the Voronoi diagram in a \alert{graph}
+    \begin{itemize}
+    \item cells \alert{vertexes} as \alert{nodes}
+    \item cells \alert{edges} as \alert{arcs} (infinite edges
+      ignored)\pause
+    \end{itemize}
+  \item \alert{Prune} the arcs that crosses an obstacle's
+    surface\pause
+  \item Attach the \alert{start} and \alert{end} points to the
+    graph as nodes\pause
+  \item Calculate the shortest path from start node to end node using
+    \alert{Dijkstra}'s algorithm.
+  \end{enumerate}
+\end{frame}
 
+\begin{frame}
+  \frametitle{Example}
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]<1>{img/screen1.eps}
+    \includegraphics[width=0.9\textwidth]<2>{img/screen2.eps}
+    \includegraphics[width=0.9\textwidth]<3>{img/screen3.eps}
+    \includegraphics[width=0.9\textwidth]<4>{img/screen4.eps}
+    \includegraphics[width=0.9\textwidth]<5>{img/screen5.eps}
+  \end{center}
+\end{frame}
+
+\section{Implementation}
+
+\begin{frame}
+  \frametitle{Improvement}
+  \begin{block}{Idea}
+    Make a \alert{smoother} curve instead of finding the polygonal chain
+    of the shortest path in the structure
+  \end{block}
+  \pause
+  \begin{itemize}
+  \item we can use a \alert{B-Spline} that \pause
+    \begin{itemize}
+    \item \alert{interpolate} the start and end vertexes\pause
+    \item use the shortest path found with
+      Dijkstra as \alert{control polygon}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Problem}  
 \end{frame}
 
 \begin{frame}
   \begin{center}
-	\textbf{\Huge The End.}\\[3cm]
+	\textbf{\calligra\Huge The End.}\\
+  \includegraphics[width=5cm]{img/ornament.eps}\\[1cm]
 	\pause
-	{\huge questions...?}
+	{\huge\calligra Questions?\pause{} Thank you!}
   \end{center}
 \end{frame}
 \end{document}
