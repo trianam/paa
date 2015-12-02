@@ -67,7 +67,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{B-spline cubiche}
+  \frametitle{B-spline}
 \end{frame}
 
 \begin{frame}
@@ -134,21 +134,61 @@
   \item The control polygon is free from obstacles by
     construction\pause
     \begin{itemize}
-    \item (the graph is pruned of the arcs that cross an obstacle's surface)
+    \item (the graph is pruned of the arcs that cross an obstacle's surface)\pause
     \end{itemize}
-  \item But the curve is not guaranteed to be free from obstacles
+  \item But the curve is not guaranteed to be free from obstacles\pause
   \end{itemize}
   \begin{center}
     \begin{tikzpicture}
-      \draw[color=green] (1,0) -- (2,1) -- (3,0) -- (1,0);
-      \draw[color=black] (0,0) -- (2,2) -- (4,0);
-      \draw[color=red] (0,0) to [bend left=40] (4,0);
+      \path[obstacle] (1,0) -- (2,1) -- (3,0) -- (1,0);
+      \draw[controlPoly] (0,0) -- (2,2) -- (4,0);
+      \draw[spline] (0,0) to [bend left=40] (4,0);
 
-      \filldraw[color=green, draw=black] (0,0) circle (2pt);
-      \filldraw[color=green, draw=black] (2,2) circle (2pt);
-      \filldraw[color=green, draw=black] (4,0) circle (2pt);
+      \filldraw[controlVert] (0,0) circle (2pt);
+      \filldraw[controlVert] (2,2) circle (2pt);
+      \filldraw[controlVert] (4,0) circle (2pt);
     \end{tikzpicture}
   \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Solution}
+  \begin{itemize}
+  \item A \alert{quadratic} B-Spline (grade 2, order 3) is contained
+    inside the union of \alert{convex hulls} composed of consecutive
+    \alert{triples} of vertexes of control polygon.\pause
+  \end{itemize}
+  \begin{center}
+    \begin{tikzpicture}
+      \coordinate (a) at (0,0);
+      \coordinate (b) at (0.5,1);
+      \coordinate (c) at (2,1.5);
+      \coordinate (d) at (4,1.5);
+      \coordinate (e) at (5.5,1);
+      \coordinate (f) at (6,0);
+
+      \path[convexHull] (a) -- (b) -- (c) -- (a);
+      \path[convexHull] (b) -- (c) -- (d) -- (b);
+      \path[convexHull] (c) -- (d) -- (e) -- (c);
+      \path[convexHull] (d) -- (e) -- (f) -- (d);
+
+      \draw[convexHullBord] (a) -- (c);
+      \draw[convexHullBord] (b) -- (d);
+      \draw[convexHullBord] (c) -- (e);
+      \draw[convexHullBord] (d) -- (f);
+
+      \draw[controlPoly] (a) -- (b) -- (c) -- (d) -- (e) -- (f);
+      \foreach \p in {a,b,c,d,e,f}
+      \filldraw[controlVert] (\p) circle (2pt);
+    \end{tikzpicture}
+  \end{center}
+  \pause
+  \begin{block}{Idea}
+    If we use a \alert{quadratic} B-Spline to smooth the
+    path, we can be sure that it don't intersect obstacles if we keep
+    free from obstacles all the triangles with vertexes tree
+    consecutive points.
+  \end{block}
 \end{frame}
 
 \begin{frame}
