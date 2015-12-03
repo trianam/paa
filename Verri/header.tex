@@ -34,6 +34,7 @@
 \tikzstyle{controlPoly}=[color=black, line width=0.25mm]
 \tikzstyle{spline}=[color=red, line width=0.5mm]
 \tikzstyle{controlVert}=[color=green, draw=black]
+\tikzstyle{textArrow}=[draw=red, line width=0.5mm, ->]
 
 \colorlet{mmcb}{black!70}
 \colorlet{mmc1}{red!80}
@@ -77,16 +78,16 @@ shadow, minimum width=\transH, minimum height=\transW]
 \tikzstyle{preN}=[<-, very thick, >=o, draw=drawColor]
 \tikzstyle{post}=[->, very thick, >=stealth', draw=drawColor]
 \tikzstyle{highlight}=[draw=red]
-\lstdefinestyle{customJava}{
-   language=Java,
+\lstdefinestyle{customPython}{
+   language=Python,
    % basicstyle=\small\ttfamily\bfseries,
-   basicstyle=\ttfamily,
+   basicstyle=\tiny\ttfamily,
    keywordstyle=\color{blue}\ttfamily,
    stringstyle=\color{red}\ttfamily,
    commentstyle=\color{green}\ttfamily,
    morecomment=[l][\color{magenta}]{\#},
    % breaklines=false,
-   breaklines=true, breakatwhitespace=false,
+   breaklines=true, breakatwhitespace=true,
    postbreak=\raisebox{0ex}[0ex][0ex]{\ensuremath{\color{red}\hookrightarrow\space}},
    frameround=fttt,
    frame=trBL,
@@ -96,15 +97,15 @@ shadow, minimum width=\transH, minimum height=\transW]
    firstnumber=1,
    numberfirstline=true,
    numberstyle=\tiny\color{black!50},
-   xleftmargin=2em,
-   framexleftmargin=1.5em,
+   xleftmargin=1.75em,
+   framexleftmargin=2.1em,
    % rulesepcolor=\color{gray},
    rulecolor=\color{black}
    % linewidth=8cm,
 }
 
-\lstdefinestyle{customInlineJava}{
-   language=Java,
+\lstdefinestyle{customInlinePython}{
+   language=Python,
    % basicstyle=\small\ttfamily\bfseries,
    basicstyle=\ttfamily,
    keywordstyle=\color{blue}\ttfamily,
@@ -113,21 +114,21 @@ shadow, minimum width=\transH, minimum height=\transW]
    morecomment=[l][\color{magenta}]{\#}
 }
 
-\lstnewenvironment{jblock}[1][]
+\lstnewenvironment{pblock}[1][]
 {
   \lstset{
-    style=customJava,
+    style=customPython,
     #1
   }
 }{}
 
-\newcommand{\jfile}[2][]{
-  \lstinputlisting[style=customJava, title={\texttt{\detokenize{#2}}}, #1]{#2}
+\newcommand{\pfile}[2][]{
+  \lstinputlisting[style=customPython, title={\texttt{\detokenize{#2}}}, #1]{#2}
 }
 
-\newcommand{\jj}[2][]{\lstinline[style=customInlineJava,#1]`#2`}
+\newcommand{\pp}[2][]{\lstinline[style=customInlinePython,#1]`#2`}
   %\colorbox{codeBgColor}{
-  %  \lstinline[style=customJava,#1]`#2`
+  %  \lstinline[style=customPython,#1]`#2`
   %}
 %}
 

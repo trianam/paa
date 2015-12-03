@@ -42,7 +42,8 @@
   \titlepage
 \end{frame}
 
-\section{Background}
+\section{Prerequisites}
+
 \begin{frame}
   \frametitle{Voronoi diagrams}
   \begin{description}
@@ -69,6 +70,45 @@
 \begin{frame}
   \frametitle{B-spline}
 \end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Dijkstra algorithm}
+  \begin{pblock}
+def dijkstra(graph, start, end):
+  path = []
+  Q = priorityQueue.PQueue()
+  dist = {}
+  prev = {}
+  for node in graph.nodes(): #populate the queue
+    if node != start:
+      dist[node] = inf
+      Q.add(node, inf)
+    else:
+      dist[node] = 0
+      Q.add(node, 0)
+  while True:  #main loop
+    u = Q.pop() #take nearest node and remove from queue
+    if u == end or dist[u] == inf: #finished (good or bad)
+      break
+    #all neighbors still in queue
+    for v in Q.filterGet(lambda node: node in graph.neighbors(u)):
+      tmpDist = dist[u] + graph[u][v]['weight']
+      if tmpDist < dist[v]: #if distance shorter update values
+        dist[v] = tmpDist
+        prev[v] = u
+        Q.add(v, tmpDist) #update distance also in queue
+  u = end
+  while u in prev:  #backward recreation of path
+      u = prev[u]
+      path[:0] = [u]
+  if path:
+      path[len(path):] = [end]
+      path[:0] = [start]
+  return path
+  \end{pblock}  
+\end{frame}
+
+\section{Background}
 
 \begin{frame}
   \frametitle{Background}
@@ -154,9 +194,9 @@
 \begin{frame}
   \frametitle{Solution}
   \begin{itemize}
-  \item A \alert{quadratic} B-Spline (grade 2, order 3) is contained
+  \item A \alert{B-Spline} of order \alert{$n$} is contained
     inside the union of \alert{convex hulls} composed of consecutive
-    \alert{triples} of vertexes of control polygon.\pause
+    \alert{$n$} vertexes of control polygon\pause
   \end{itemize}
   \begin{center}
     \begin{tikzpicture}
@@ -184,10 +224,188 @@
   \end{center}
   \pause
   \begin{block}{Idea}
-    If we use a \alert{quadratic} B-Spline to smooth the
-    path, we can be sure that it don't intersect obstacles if we keep
-    free from obstacles all the triangles with vertexes tree
-    consecutive points.
+    \begin{itemize}
+    \item we can use a \alert{quadratic} B-Spline (grade 2, order 3) to smooth the
+      path\pause
+    \item and \alert{keep} triangles formed by three
+      consecutive points
+      \alert{free} from obstacles
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Implementation}
+  \begin{tikzpicture}[remember picture,overlay]
+    \path[textArrow]<11-> ([xshift=-5.5mm,yshift=1mm]tloop2.west) to [out=180, in=180,distance=7mm] ([xshift=-5.5mm,yshift=1mm]tloop1.west);
+  \end{tikzpicture}
+  A variation of \alert{Dijkstra} algorithm is developed where:\pause
+  \begin{enumerate}
+  \item create an ordered \alert{triple} for each three consecutive nodes in the graph\pause
+  \item check if the \alert{triangle} corresponding to each triple
+    \alert{intersect} an obstacle\pause
+  \item populate the \alert{priority queue} with obstacle free
+    \alert{triples}\pause
+    \begin{itemize}
+    \item the initial weight is \alert{$0$} for triples where the
+      \alert{first} node is the \alert{start} node\pause
+    \item is \alert{$\infty$} otherwise\pause
+    \end{itemize}
+  \item\label{item:trijkstraLoop}\tikz[remember picture] \node[coordinate] (tloop1) {};pop the triple with \alert{lowest} weight from the priority
+    queue\pause
+  \item update the weight and pointer to previous of all \alert{neighbouring} triples\pause
+    \begin{itemize}
+    \item a triple $B$ is \alert{subsequent} to a triple $A$ if
+      \alert{$(A[2]=B[1])\land (A[3]=B[2])$}\pause
+    \item the \alert{weight} of a neighbour is \alert{$W(B)=W(A)+dist(A[1],A[2])$}\pause
+    \end{itemize}
+  \item\tikz[remember picture] \node[coordinate] (tloop2) {};repeat from point~\ref{item:trijkstraLoop} until popped a
+    special \alert{ending} triple or a triple with weight
+    \alert{$\infty$}\pause
+  \item the shortest \alert{path} (with free triangular convex hull)
+    can be 
+    obtained following the \alert{previous} pointer from the
+    \alert{ending} triple,
+    and \alert{deconstructing} the triples
+  \end{enumerate}
+\end{frame}
+
+\section{Code}
+
+\begin{frame}[fragile]
+  \frametitle{Declarations \& Triples creation}
+  \begin{pblock}
+def _trijkstra(self, startA, endA):
+  start = tuple(startA)
+  end = tuple(endA)
+  endTriplet = (end,end,end) #special triplet for termination
+  inf = float("inf")
+  path = []
+  Q = priorityQueue.PQueue()
+  dist = {}
+  prev = {}
+  hits = []
+  \end{pblock}
+  \begin{pblock}
+  for node0 in self._graph.nodes():
+    for node1 in self._graph.neighbors(node0):
+      for node2 in filter(lambda node: node!=node0, self._graph.neighbors(node1)):
+        triplet = (node0,node1,node2)
+        if not triplet[::-1] in hits:
+          if not self._triangleIntersectPolyhedrons(np.array(node0), np.array(node1), np.array(node2)):
+            if node0 != start:
+              dist[triplet] = inf
+              Q.add(triplet, inf)
+            else:
+              dist[triplet] = 0
+              Q.add(triplet, 0)
+          else:
+            hits[:0] = [triplet]
+
+  dist[endTriplet] = inf
+  Q.add(endTriplet, inf)
+  \end{pblock}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Main loop}
+  \begin{pblock}
+while True:
+  u = Q.pop()
+
+  if u == endTriplet or dist[u] == inf:
+    break
+
+  for v in Q.filterGet(lambda tri: u[1] == tri[0] and u[2] == tri[1]):
+    tmpDist = dist[u] + self._graph[u[0]][u[1]]['weight']
+    if tmpDist < dist[v]:
+      dist[v] = tmpDist
+      prev[v] = u
+      Q.add(v, tmpDist)
+
+  if u[2] == end:
+    tmpDist = dist[u] + self._graph[u[0]][u[1]]['weight'] + self._graph[u[1]][u[2]]['weight']
+    if tmpDist < dist[endTriplet]:
+      dist[endTriplet] = tmpDist
+      prev[endTriplet] = u
+      Q.add(v, tmpDist)
+  \end{pblock}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Path creation}
+  \begin{pblock}
+u = endTriplet
+while u in prev:
+  u = prev[u]
+  path[:0] = [u[1]]
+
+if path:
+  path[len(path):] = [end]
+  path[:0] = [start]
+
+return np.array(path)
+  \end{pblock}\pause
+  \begin{block}{After}
+    we can use the returned \alert{path} as a \alert{control polygon}
+    for a quadratic
+    B-Spline without problems, and construct a smoother path.
+  \end{block}
+\end{frame}
+
+\section{Conclusion}
+
+\begin{frame}
+  \frametitle{Previous example}
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{img/screenFinal.eps}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Clearer example}
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{img/screenFinal2.eps}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Complexity considerations}
+  The algorithm is analogous to \alert{Dijkstra} applied to a
+  \alert{transformed} graph where:\pause
+  \begin{itemize}
+  \item the original graph is \alert{not} directed and weighted\pause
+  \item the transformed graph is \alert{directed} and weighted,
+    and\pause
+    \begin{itemize}
+    \item if \alert{$A$} and \alert{$B$} are \alert{neighbouring} and
+      \alert{$B$} and \alert{$C$} are \alert{neighbouring}, in the original graph\pause
+    \item we have two nodes \alert{$(A,B,C)$} and
+      \alert{$(C,B,A)$} in the transformed graph\pause
+    \item a node \alert{$(A_1,B_1,C_1)$} is a predecessor of
+      \alert{$(A_2,B_2,C_2)$} in the transformed graph if
+      \alert{$B_1=A_2$} and \alert{$C_1=B_2$} in the original graph\pause
+    \item and the weight of the arc is the weight of the original from
+      \alert{$A_1$} to \alert{$B_1=A_2$}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Cost}
+  If the original graph is a \alert{clique} the cost is the one of
+  Dijkstra: $O(N^2\log N)$ where for each node the complexity
+  increase by a factor of $N^3$, so in total
+  $$
+  O(N^6\log N)
+  $$
+  \pause
+  \begin{block}{But}
+    The original graph is not a \alert{clique}, is more similar to a
+    lattice\pause
+    \begin{itemize}
+    \item Still need to study deeper the complexity
+    \end{itemize}
   \end{block}
 \end{frame}
 
