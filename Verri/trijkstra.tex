@@ -69,6 +69,16 @@
 
 \begin{frame}
   \frametitle{B-spline}
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{img/bspline.eps}
+  \end{center}
+  \pause
+  \begin{itemize}
+  \item \alert{parametric} curves\pause
+  \item follow the shape of a \alert{control poligon}\pause
+  \item can interpolate the
+    \alert{extremes} of the control polygon
+  \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -171,12 +181,12 @@ def dijkstra(graph, start, end):
 \begin{frame}
   \frametitle{Problem}  
   \begin{itemize}
-  \item The control polygon is free from obstacles by
+  \item The \alert{control polygon} is free from obstacles by
     construction\pause
     \begin{itemize}
     \item (the graph is pruned of the arcs that cross an obstacle's surface)\pause
     \end{itemize}
-  \item But the curve is not guaranteed to be free from obstacles\pause
+  \item But the \alert{curve} is not guaranteed to be free from obstacles\pause
   \end{itemize}
   \begin{center}
     \begin{tikzpicture}
@@ -371,7 +381,7 @@ return np.array(path)
 
 \begin{frame}
   \frametitle{Complexity considerations}
-  The algorithm is analogous to \alert{Dijkstra} applied to a
+  The algorithm is analogous to classical \alert{Dijkstra} applied to a
   \alert{transformed} graph where:\pause
   \begin{itemize}
   \item the original graph is \alert{not} directed and weighted\pause
@@ -386,24 +396,32 @@ return np.array(path)
       \alert{$(A_2,B_2,C_2)$} in the transformed graph if
       \alert{$B_1=A_2$} and \alert{$C_1=B_2$} in the original graph\pause
     \item and the weight of the arc is the weight of the original from
-      \alert{$A_1$} to \alert{$B_1=A_2$}
+      \alert{$A_1$} to \alert{$B_1(=A_2)$}
     \end{itemize}
   \end{itemize}
 \end{frame}
 
 \begin{frame}
-  \frametitle{Cost}
-  If the original graph is a \alert{clique} the cost is the one of
-  Dijkstra: $O(N^2\log N)$ where for each node the complexity
-  increase by a factor of $N^3$, so in total
-  $$
-  O(N^6\log N)
-  $$
+  \frametitle{Time complexity}
+  \begin{itemize}
+  \item If the original graph is a \alert{clique}\pause
+  \item cost of \alert{Dijkstra}: $\bigO(|E_{mod}|+|V_{mod}|\log |V_{mod}|)=$\alert{$\bigO(|V_{mod}|^2)$}\pause
+  \item where the number $|V_{mod}|$ of nodes is the
+    number of 3-permutation of the original nodes: $|V_{orig}|\cdot
+    (|V_{orig}|-1)\cdot(|V_{orig}|-2)=$\alert{$\bigO(|V_{orig}|^3)$}\pause
+  \item plus a negligible \alert{$\bigO(|V_{orig}|^3)$} for the triples
+    creation\pause
+  \end{itemize}
+  \begin{block}{In total}
+    \alert{$$\bigO(|V_{orig}|^6)$$}
+  \end{block}
   \pause
   \begin{block}{But}
-    The original graph is not a \alert{clique}, is more similar to a
-    lattice\pause
     \begin{itemize}
+    \item The original graph is not a \alert{clique}, is a
+      lattice\pause
+    \item Maybe too pessimistic assuming
+      $|E_{mod}|=\bigO(|V_{mod}|^2)$\pause
     \item Still need to study deeper the complexity
     \end{itemize}
   \end{block}
