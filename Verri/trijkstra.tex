@@ -434,24 +434,49 @@ return np.array(path)
     \begin{itemize}
     \item each node has maximum $k$ \alert{neighbours}\pause
     \end{itemize}
-  \item Each \alert{node} is the \alert{central} point of $2\cdot
-    \binom{k}{2}=k\cdot(k-1)$ triples\pause
-    \begin{tikzpicture}[scale=0.5]
-      \coordinate (r) at (1.5,0.5);
+  \item
+    \begin{minipage}[t]{0.8\linewidth}
+      Each \alert{node} is the \alert{central} point of $2\cdot
+      \binom{k}{2}=k\cdot(k-1)$ triples
+    \end{minipage}\hfill
+    \begin{tikzpicture}
+      \coordinate (r) at (0.75,0.2);
       \coordinate (a) at (0,0);
-      \coordinate (b) at (1,0);
-      \coordinate (c) at (2,0);
-      \coordinate (d) at (3,0);
+      \coordinate (b) at (0.5,0);
+      \coordinate (c) at (1,0);
+      \coordinate (d) at (1.5,0);
       \draw[controlPoly] (a) -- (r) -- (b);
       \draw[controlPoly] (c) -- (r) -- (d);
-
-      \foreach \p in {r,a,b,c,d}
+      
+      \filldraw[controlVert,fill=red] (r) circle (2pt);
+      \foreach \p in {a,b,c,d}
       \filldraw[controlVert] (\p) circle (2pt);
-    \end{tikzpicture}
+    \end{tikzpicture}\pause
+
     \begin{itemize}
     \item $|V_{mod}|=|V_{orig}|\cdot k\cdot(k-1)=$\alert{$\bigO(k^2|V_{orig}|)$}\pause
     \end{itemize}
-  \item Each \alert{triple} is a \alert{predecessor} of $k-1$ triples\pause
+  \item 
+    \begin{minipage}[t]{0.8\linewidth}
+      Each \alert{triple} is a \alert{predecessor} of $k-1$ triples
+    \end{minipage}\hfill
+    \begin{tikzpicture}
+      \coordinate (r) at (0.5,0.2);
+      \coordinate (a) at (0,0);
+      \coordinate (b) at (0.5,0);
+      \coordinate (c) at (1,0);
+      \coordinate (s) at (0.75,0.4);
+      \coordinate (t) at (1,0.4);
+      \draw[controlPoly] (a) -- (r) -- (b);
+      \draw[controlPoly] (c) -- (r);
+      \draw[controlPoly] (r) -- (s) -- (t);
+      
+      \foreach \p in {r,s,t}
+      \filldraw[controlVert,fill=red] (\p) circle (2pt);
+      \foreach \p in {a,b,c}
+      \filldraw[controlVert] (\p) circle (2pt);
+    \end{tikzpicture}\pause
+
     \begin{itemize}
     \item $|E_{mod}|=|V_{mod}|\cdot (k-1)=\bigO(k|V_{mod}|)=$\alert{$\bigO(k^3|V_{orig}|)$}\pause
     \end{itemize}
@@ -464,7 +489,7 @@ return np.array(path)
   \begin{block}{If $k$ is constant (don't grow with $|V_{orig}|$)}
     \begin{itemize}
     \item Total cost: \alert{$\bigO(|V_{orig}|\log|V_{orig}|)$}\pause
-    \item same cost of Dijkstra
+    \item same cost of Dijkstra in a lattice
     \end{itemize}
   \end{block}
 \end{frame}
