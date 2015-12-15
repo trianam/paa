@@ -402,7 +402,7 @@ return np.array(path)
 \end{frame}
 
 \begin{frame}
-  \frametitle{Time complexity}
+  \frametitle{Time complexity (rough worst case scenario)}
   \begin{itemize}
   \item If the original graph is a \alert{clique}\pause
   \item cost of \alert{Dijkstra}: $\bigO(|E_{mod}|+|V_{mod}|\log |V_{mod}|)=$\alert{$\bigO(|V_{mod}|^2)$}\pause
@@ -423,6 +423,48 @@ return np.array(path)
     \item Maybe too pessimistic assuming
       $|E_{mod}|=\bigO(|V_{mod}|^2)$\pause
     \item Still need to study deeper the complexity
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Time complexity (more plausible scenario)}
+  \begin{itemize}
+  \item Suppose that the graph has a maximum degree \alert{$k$}\pause
+    \begin{itemize}
+    \item each node has maximum $k$ \alert{neighbours}\pause
+    \end{itemize}
+  \item Each \alert{node} is the \alert{central} point of $2\cdot
+    \binom{k}{2}=k\cdot(k-1)$ triples\pause
+    \begin{tikzpicture}[scale=0.5]
+      \coordinate (r) at (1.5,0.5);
+      \coordinate (a) at (0,0);
+      \coordinate (b) at (1,0);
+      \coordinate (c) at (2,0);
+      \coordinate (d) at (3,0);
+      \draw[controlPoly] (a) -- (r) -- (b);
+      \draw[controlPoly] (c) -- (r) -- (d);
+
+      \foreach \p in {r,a,b,c,d}
+      \filldraw[controlVert] (\p) circle (2pt);
+    \end{tikzpicture}
+    \begin{itemize}
+    \item $|V_{mod}|=|V_{orig}|\cdot k\cdot(k-1)=$\alert{$\bigO(k^2|V_{orig}|)$}\pause
+    \end{itemize}
+  \item Each \alert{triple} is a \alert{predecessor} of $k-1$ triples\pause
+    \begin{itemize}
+    \item $|E_{mod}|=|V_{mod}|\cdot (k-1)=\bigO(k|V_{mod}|)=$\alert{$\bigO(k^3|V_{orig}|)$}\pause
+    \end{itemize}
+  \item Cost of \alert{Dijkstra}: $\bigO(|E_{mod}|+|V_{mod}|\log
+    |V_{mod}|)=$\alert{$\bigO(k^3|V_{orig}|+ k^2|V_{orig}|\log(k|V_{orig}|))$}\pause
+  \item Negligible cost for triples \alert{creation}: $|V_{orig}|\cdot k\cdot
+    (k-1)=$\alert{$\bigO(k^2|V_{orig}|)$}\pause
+  \end{itemize}
+
+  \begin{block}{If $k$ is constant (don't grow with $|V_{orig}|$)}
+    \begin{itemize}
+    \item Total cost: \alert{$\bigO(|V_{orig}|\log|V_{orig}|)$}\pause
+    \item same cost of Dijkstra
     \end{itemize}
   \end{block}
 \end{frame}
